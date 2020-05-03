@@ -11,7 +11,9 @@ docker run -d \
   --name plex \
   -v /path/to/config:/config \
   -v /path/to/data:/data \
-  --net host \
+  -p 32400:32400 \
   --restart unless-stopped \
   nelsonyaccuzzi/docker-rpi-plex
 ```
+
+Add `-e ADVERTISE_IP=http://<hostIP>:32400/` to access plex from network devices.
