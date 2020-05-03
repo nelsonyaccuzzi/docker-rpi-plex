@@ -1,15 +1,30 @@
-dist: xenial
-sudo: required
-env:
-  global:
-    - DOCKER_REPO=nelsonyaccuzzi/docker-rpi-plex
+dist: bionic
+language: shell
 before_install:
-  - curl -fsSL https://get.docker.com | sh
-  - echo '{"experimental":"enabled"}' | sudo tee /etc/docker/daemon.json
-  - mkdir -p $HOME/.docker
-  - echo '{"experimental":"enabled"}' | sudo tee $HOME/.docker/config.json
-  - sudo service docker start
-install:
-  - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-  - docker buildx create --name xbuilder --use
-script: ./scripts/build.sh
+  - set -e
+  # Configure environment so changes are picked up when the Docker daemon is restarted after upgrading
+  - echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json
+  - export DOCKER_CLI_EXPERIMENTAL=enabled
+  - docker run --rm --privileged docker/binfmt:a7996909642ee92942dcd6cff44b9b95f08dad64
+  # Upgrade to Docker CE 19.03 for BuildKit support
+  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+  - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+  - sudo apt-get update
+  - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce=5:19.03.8~3-0~ubuntu-bionic # pin version for reproducibility
+  # Create Builder
+  - docker buildx create --name builder --use
+stages:
+  - name: test
+    if: branch != master
+  - name: deploy
+    if: branch = master
+jobs:
+  include:
+    - stage: test
+      script: docker buildx build --progress plain --build-arg VERSION=$VERSION --platform=linux/arm/v7 .
+    - stage: deploy
+      script: 
+        - echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin &> /dev/null
+        - docker buildx build --progress plain --output type=docker --build-arg VERSION=$VERSION --platform=linux/arm/v7 -t $TRAVIS_REPO_SLUG:$VERSION .
+        - docker tag $TRAVIS_REPO_SLUG:$VERSION $TRAVIS_REPO_SLUG:latest
+        - docker push $TRAVIS_REPO_SLUG
