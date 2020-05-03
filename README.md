@@ -1,4 +1,8 @@
-# Plex Docker Image for Raspberry Pi [![Build Status](https://travis-ci.org/nelsonyaccuzzi/docker-rpi-plex.svg?branch=master)](https://travis-ci.org/nelsonyaccuzzi/docker-rpi-plex)
+# Plex Docker Image for Raspberry Pi 
+![Travis (.org)](https://img.shields.io/travis/nelsonyaccuzzi/docker-rpi-plex?style=flat-square)
+![Docker Image Size (latest semver)](https://img.shields.io/docker/image-size/nelsonyaccuzzi/docker-rpi-plex?style=flat-square)
+![Docker Pulls](https://img.shields.io/docker/pulls/nelsonyaccuzzi/docker-rpi-plex?style=flat-square)
+![Docker Image Version (latest semver)](https://img.shields.io/docker/v/nelsonyaccuzzi/docker-rpi-plex?sort=semver&style=flat-square)
 
 ## Usage
 
