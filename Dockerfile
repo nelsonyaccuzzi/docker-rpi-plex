@@ -5,7 +5,7 @@ ARG PLEX_PATH
 ARG VERSION
 
 RUN apt update && apt install -y wget ca-certificates locales \
- && wget --no-verbose -O /tmp/plex.tar https://downloads.plex.tv/plex-media-server-new/$VERSION/synology/PlexMediaServer-$VERSION-armv7hf.spk \
+ && wget --no-verbose -O /tmp/plex.tar https://downloads.plex.tv/plex-media-server-new/$VERSION/synology/PlexMediaServer-$VERSION-armv7hf_DSM6.spk \
  && tar -xf /tmp/plex.tar -C /tmp \
  && mkdir -p $PLEX_PATH \
  && tar -xf /tmp/package.tgz -C $PLEX_PATH \
